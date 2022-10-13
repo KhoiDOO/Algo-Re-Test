@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 class BDIP:
     def __init__(self, patch_size = 2, channel_merge = False, epsilon = 0.000001, n_Octaves = 3, threshold = 0.1) -> None:
@@ -47,13 +48,15 @@ class BDIP:
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
                 output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/(np.amax(current_block) + self.epsilon)
 
-        cv2.imshow("results", output)
-        cv2.waitKey(0)
-        print(np.unique(output))
+        # cv2.imshow("results", output)
+        # cv2.waitKey(0)
         if path:
             frame_normed = 255 * (output - output.min()) / (output.max() - output.min())
             frame_normed = np.array(frame_normed, np.int)
             cv2.imwrite(path, frame_normed)
+            plt.hist(output.ravel(), bins=256, range=(0.0, 1.0), fc='k', ec='k') #calculating histogram
+            plt.savefig("Histogram\\" + path.split("\\")[-1])
+            
 
 
 os.chdir("..")
@@ -64,5 +67,7 @@ img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
 bdip = BDIP()
-extract1 = bdip.extract(img = img1, path="ExampleImage\\BDIP_" + img_path1.split("\\")[-1])                  
-extract2 = bdip.extract(img = img2, path="ExampleImage\\BDIP_" + img_path2.split("\\")[-1])
+bdip.extract(img = img1, path="ExampleImage\\BDIP_" + img_path1.split("\\")[-1])                  
+bdip.extract(img = img2, path="ExampleImage\\BDIP_" + img_path2.split("\\")[-1])
+
+bdip_img1_path = main_data_dir + "\\BDIP_CHGastro_Abnormal_037"

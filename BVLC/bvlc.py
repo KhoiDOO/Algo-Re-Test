@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 class BVLC:
     def __init__(self, channel_merge = False, stride = 1, n_Octaves = 3, epsilon = 0.000001, pairs = ((0, 1), (1, 0), (1, 1), (1, -1))) -> None:
@@ -75,13 +76,14 @@ class BVLC:
                     shift_block = padd_gray[i_shift : i_shift + self.block_size, j_shift : j_shift + self.block_size]
                     local_coefs.append(self.local_coree_coef(current_block, shift_block))
                 output[current_index[0], current_index[1]] = max(local_coefs) - min(local_coefs)
-        cv2.imshow("results", output)
-        cv2.waitKey(0)
-        print(np.unique(output))
+        # cv2.imshow("results", output)
+        # cv2.waitKey(0)
         if path:
             frame_normed = 255 * (output - output.min()) / (output.max() - output.min())
             frame_normed = np.array(frame_normed, np.int)
             cv2.imwrite(path, frame_normed)
+            plt.hist(output.ravel(), bins=256, range=(0.0, 2.0), fc='k', ec='k') #calculating histogram
+            plt.savefig("Histogram\\" + path.split("\\")[-1])
 
 
 os.chdir("..")

@@ -3,10 +3,11 @@ import numpy as np
 import cv2
 
 class BDIP:
-    def __init__(self, patch_size = 2, channel_merge = False, n_Octaves = 3, threshold = 0.1) -> None:
+    def __init__(self, patch_size = 2, channel_merge = False, epsilon = 0.000001, n_Octaves = 3, threshold = 0.1) -> None:
         self.block_size = patch_size
         self.channel_merge = channel_merge
         self.patch_area = patch_size**2
+        self.epsilon = epsilon
 
     def padding(self, img : np.array):
         padding_size = [0, 0]
@@ -24,7 +25,7 @@ class BDIP:
         return full_padd_gray
 
 
-    def extract(self, img : np.array, gray = "grayscale"):
+    def extract(self, img : np.array, gray = "grayscale", path = None):
         if gray == "grayscale":
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         elif gray == "avg":
@@ -44,11 +45,15 @@ class BDIP:
             for j in range(0, col_index, self.block_size):
                 current_index = (int(i/self.block_size), int(j/self.block_size))
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
-                output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/np.amax(current_block)
+                output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/(np.amax(current_block) + self.epsilon)
 
         cv2.imshow("results", output)
         cv2.waitKey(0)
-        return output
+        print(np.unique(output))
+        if path:
+            frame_normed = 255 * (output - output.min()) / (output.max() - output.min())
+            frame_normed = np.array(frame_normed, np.int)
+            cv2.imwrite(path, frame_normed)
 
 
 os.chdir("..")
@@ -59,7 +64,5 @@ img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
 bdip = BDIP()
-extract1 = bdip.extract(img1) 
-cv2.imwrite("ExampleImage\\BDIP_" + img_path1.split("\\")[-1], extract1)                  
-extract2 = bdip.extract(img2)
-cv2.imwrite("ExampleImage\\BDIP_" + img_path2.split("\\")[-1], extract2)
+extract1 = bdip.extract(img = img1, path="ExampleImage\\BDIP_" + img_path1.split("\\")[-1])                  
+extract2 = bdip.extract(img = img2, path="ExampleImage\\BDIP_" + img_path2.split("\\")[-1])

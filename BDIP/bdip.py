@@ -46,8 +46,8 @@ class BDIP:
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
                 output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/np.amax(current_block)
 
-        # cv2.imshow("results", output)
-        # cv2.waitKey(0)
+        cv2.imshow("results", output)
+        cv2.waitKey(0)
         return output
 
 

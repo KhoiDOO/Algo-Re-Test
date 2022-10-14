@@ -101,8 +101,6 @@ img_path2 = main_data_dir + "\\CHGastro_Normal_047.png"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
-bdip = BDIP()
-bdip.extract(img = img1, path="ExampleImage\\BDIP_" + img_path1.split("\\")[-1])                  
-bdip.extract(img = img2, path="ExampleImage\\BDIP_" + img_path2.split("\\")[-1])
-
-bdip_img1_path = main_data_dir + "\\BDIP_CHGastro_Abnormal_037"
+bdip = BDIP(patch_size=7)
+bdip.extract(img = img1, path="ExampleImage\\BDIP_7" + img_path1.split("\\")[-1])                  
+bdip.extract(img = img2, path="ExampleImage\\BDIP_7" + img_path2.split("\\")[-1])

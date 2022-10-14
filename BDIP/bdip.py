@@ -4,13 +4,29 @@ import cv2
 import matplotlib.pyplot as plt
 
 class BDIP:
-    def __init__(self, patch_size = 2, channel_merge = False, epsilon = 0.000001, n_Octaves = 3, threshold = 0.1) -> None:
+    def __init__(self, patch_size = 2, channel_merge = False, epsilon = 0.000001, n_Octaves = 3) -> None:
+        """__init__ Instantiates a BDIP object
+
+        Keyword Arguments:
+            patch_size -- int: size of the kernel block (default: {2})
+            channel_merge -- bool: merge all channel of image into one if True (default: {False})
+            epsilon -- float: relatively small number to avoid zero division (default: {0.000001})
+            n_Octaves -- int: number of scale times - currently not implemented (default: {3})
+        """
         self.block_size = patch_size
         self.channel_merge = channel_merge
         self.patch_area = patch_size**2
         self.epsilon = epsilon
 
     def padding(self, img : np.array):
+        """padding Calculate the padding to image so that the kernel block is fully spread
+
+        Arguments:
+            img -- np.array: original image 
+
+        Returns:
+            tuple: padding size
+        """
         padding_size = [0, 0]
         if img.shape[0] % self.block_size != 0:
             padding_size[0] = self.block_size - img.shape[0] % self.block_size
@@ -19,6 +35,15 @@ class BDIP:
         return padding_size
 
     def add_padding(self, gray : np.array, padding_size : tuple):
+        """add_padding Add the padding to image so that the kernel block is fully spread
+
+        Arguments:
+            gray -- np.array: gray scale image 
+            padding_size -- tuple(2x2): size of x and y padding
+
+        Returns:
+            padded image
+        """
         row_padding = np.zeros((gray.shape[0], padding_size[1])) 
         col_padding = np.zeros((padding_size[0], gray.shape[1] + padding_size[1]))
         row_pad_gray = np.concatenate([gray, row_padding], axis=1)
@@ -27,6 +52,16 @@ class BDIP:
 
 
     def extract(self, img : np.array, gray = "grayscale", path = None):
+        """extract calculating the BDIP of a given image
+
+        Arguments:
+            img -- np.array: original image
+
+        Keyword Arguments:
+            gray -- str: - grayscale -> Convert image into grayscal image by using gray coef (default: {"grayscale"})
+                         - avg -> convert image into grayscale by using the avg of all channels
+            path -- str: path to save BDIP figure (default: {None})
+        """
         if gray == "grayscale":
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         elif gray == "avg":

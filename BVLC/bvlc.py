@@ -4,7 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 class BVLC:
-    def __init__(self, channel_merge = False, stride = 1, n_Octaves = 3, epsilon = 0.000001, pairs = ((0, 1), (1, 0), (1, 1), (1, -1))) -> None:
+    def __init__(self, patchsize = 2, channel_merge = False, stride = 1, n_Octaves = 3, epsilon = 0.000001, pairs = ((0, 1), (1, 0), (1, 1), (1, -1))) -> None:
         """__init__ _summary_
 
         Keyword Arguments:
@@ -13,8 +13,9 @@ class BVLC:
             n_Octaves -- int: the number of times the kernel scales - not implemented (default: {3})
             epsilon -- float: relatively small number to avoid zero division (default: {0.000001})
             pairs -- tuple (4 x 2): Direction of block translating (default: {((0, 1), (1, 0), (1, 1), (1, -1))})
+            patchsize -- int: size of the block
         """        
-        self.block_size = 2
+        self.block_size = patchsize
         self.patch_area = self.block_size ** 2
         self.channel_merge = channel_merge
         self.pairs = pairs
@@ -32,11 +33,11 @@ class BVLC:
         """
         padding_size = [0, 0, 0, 0] # up down left right
         if img.shape[0] % self.block_size == 0:
-            padding_size[0], padding_size[1] = 1, 1
+            padding_size[0], padding_size[1] = self.block_size, self.block_size
         elif img.shape[0] % self.block_size == 1:
-            padding_size[0] = 1
+            padding_size[0] = self.block_size
         if img.shape[1] % self.block_size == 0:
-            padding_size[2], padding_size[3] = 1, 1
+            padding_size[2], padding_size[3] = self.block_size, self.block_size
         return padding_size
 
     def add_padding(self, gray : np.array, padding_size : tuple):
@@ -104,17 +105,22 @@ class BVLC:
 
         output = np.zeros((row_block_index, col_block_index))
 
-        for i in range(self.stride, row_index - self.stride, self.block_size):
-            for j in range(self.stride, col_index - self.stride, self.block_size):
+        for i in range(self.block_size, row_index - self.block_size, self.block_size):
+            for j in range(self.block_size, col_index - self.block_size, self.block_size):
                 current_index = (int(i/self.block_size), int(j/self.block_size))
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
+                print(current_block)
                 local_coefs = []
                 for x in self.pairs:
                     i_shift = i + x[1]
                     j_shift = j + x[0]
                     shift_block = padd_gray[i_shift : i_shift + self.block_size, j_shift : j_shift + self.block_size]
+                    print(shift_block)
                     local_coefs.append(self.local_coree_coef(current_block, shift_block))
+                    # break
                 output[current_index[0], current_index[1]] = max(local_coefs) - min(local_coefs)
+            #     break
+            # break
         # cv2.imshow("results", output)
         # cv2.waitKey(0)
         if path:
@@ -132,6 +138,6 @@ img_path2 = main_data_dir + "\\CHGastro_Normal_047.png"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
-bdlc = BVLC()
-extract1 = bdlc.extract(img = img1, path="ExampleImage\\BVLC_" + img_path1.split("\\")[-1])                  
-extract2 = bdlc.extract(img = img2, path="ExampleImage\\BVLC_" + img_path2.split("\\")[-1])
+bdlc = BVLC(patchsize=7)
+extract1 = bdlc.extract(img = img1, path="ExampleImage\\BVLC_7" + img_path1.split("\\")[-1])                  
+extract2 = bdlc.extract(img = img2, path="ExampleImage\\BVLC_7" + img_path2.split("\\")[-1])

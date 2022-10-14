@@ -5,6 +5,15 @@ import matplotlib.pyplot as plt
 
 class BVLC:
     def __init__(self, channel_merge = False, stride = 1, n_Octaves = 3, epsilon = 0.000001, pairs = ((0, 1), (1, 0), (1, 1), (1, -1))) -> None:
+        """__init__ _summary_
+
+        Keyword Arguments:
+            channel_merge -- boolean: all channel in the image will be merged if True (default: {False})
+            stride -- int: the translating size of block size  (default: {1})
+            n_Octaves -- int: the number of times the kernel scales - not implemented (default: {3})
+            epsilon -- float: relatively small number to avoid zero division (default: {0.000001})
+            pairs -- tuple (4 x 2): Direction of block translating (default: {((0, 1), (1, 0), (1, 1), (1, -1))})
+        """        
         self.block_size = 2
         self.patch_area = self.block_size ** 2
         self.channel_merge = channel_merge
@@ -13,6 +22,14 @@ class BVLC:
         self.epsilon = epsilon
 
     def padding(self, img : np.array):
+        """padding Calculates the padding size
+
+        Arguments:
+            img -- np.array: input image
+
+        Returns:
+            padding size -- tuple(4 x 1): padding size for each side of input image
+        """
         padding_size = [0, 0, 0, 0] # up down left right
         if img.shape[0] % self.block_size == 0:
             padding_size[0], padding_size[1] = 1, 1
@@ -23,6 +40,15 @@ class BVLC:
         return padding_size
 
     def add_padding(self, gray : np.array, padding_size : tuple):
+        """add_padding add padding to the image
+
+        Arguments:
+            gray -- np.array: gray scale input image
+            padding_size -- tuple(4 x 1): padding size need adding 
+
+        Returns:
+            padded image
+        """
         up_pad = np.zeros((padding_size[0], gray.shape[1]))
         down_pad = np.zeros((padding_size[1], gray.shape[1]))
         left_pad = np.zeros((gray.shape[0] + padding_size[0] + padding_size[1], padding_size[2]))
@@ -34,15 +60,19 @@ class BVLC:
         return right_cat_pad
 
     def local_coree_coef(self, current_block : np.array, shift_block : np.array):
+        """local_coree_coef Calculates the local correlation coefficient
+
+        Arguments:
+            current_block -- np.array(block_size x block_size): sub-matrix of image overlap the current block
+            shift_block -- np.array(block_size x block_size): sub-matrix of image translated by pair
+
+        Returns:
+            local_coree_coef -- float
+        """
         local_mean = np.mean(current_block)
         local_std = np.std(current_block)
         shift_mean = np.mean(shift_block)
-        shift_std = np.std(shift_block)
-
-        # intensity_changes = np.array([current_block * shift_block[0, 0], 
-        #                                 current_block * shift_block[0, 1], current_block * shift_block[1, 0],
-        #                                 current_block * shift_block[1, 1]])
-        
+        shift_std = np.std(shift_block)      
 
         nominator = np.sum(current_block*shift_block)/self.patch_area - local_mean*shift_mean
         dominator = local_std * shift_std + self.epsilon
@@ -50,6 +80,15 @@ class BVLC:
         return nominator/dominator
 
     def extract(self, img : np.array, gray = "grayscale", path = None):
+        """extract Calculates the BVLC image
+
+        Arguments:
+            img -- np.array: input image
+
+        Keyword Arguments:
+            gray -- str: define the way of calculating the grayscale image (default: {"grayscale"})
+            path -- str: path to save the BVLC image and its histogram (default: {None})
+        """
         if gray == "grayscale":
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         elif gray == "avg":

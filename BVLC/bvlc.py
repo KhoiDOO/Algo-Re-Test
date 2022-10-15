@@ -109,18 +109,13 @@ class BVLC:
             for j in range(self.block_size, col_index - self.block_size, self.block_size):
                 current_index = (int(i/self.block_size), int(j/self.block_size))
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
-                print(current_block)
                 local_coefs = []
                 for x in self.pairs:
                     i_shift = i + x[1]
                     j_shift = j + x[0]
                     shift_block = padd_gray[i_shift : i_shift + self.block_size, j_shift : j_shift + self.block_size]
-                    print(shift_block)
                     local_coefs.append(self.local_coree_coef(current_block, shift_block))
-                    # break
                 output[current_index[0], current_index[1]] = max(local_coefs) - min(local_coefs)
-            #     break
-            # break
         # cv2.imshow("results", output)
         # cv2.waitKey(0)
         if path:

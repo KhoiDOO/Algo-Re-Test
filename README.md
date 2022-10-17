@@ -10,6 +10,16 @@
   - v0.2: $O(4(log_{b}{(n - 4s)})^2)$ b: block_size, s: stride
 - LBP:
   - v0.0: $O(n^2)$
+- GLCM:
+  - GLCM(scikit-image): 
+    - v0.0: $> O(n^2)$
+  - fastGLCM: 
+    - v0.0: $O(n^2)$ n: level
+- FeatureVeinExtraction:
+  - MaskMethod: 
+    - v0.0: unavailable
+- BlockFilter:
+  - v0.0: unavailable
 
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|

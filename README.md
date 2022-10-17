@@ -15,7 +15,7 @@
     - v0.0: $> O(n^2)$
   - fastGLCM: 
     - v0.0: $O(n^2)$ n: level
-- FeatureVeinExtraction:
+- FingerVeinExtraction:
   - MaskMethod: 
     - v0.0: unavailable
 - BlockFilter:

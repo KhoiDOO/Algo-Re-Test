@@ -80,11 +80,11 @@ class LBP:
     
 os.chdir("..")
 main_data_dir = os.getcwd() + "\\ExampleImage"
-img_path1 = main_data_dir + "\\001_01.bmp"
-img_path2 = main_data_dir + "\\002_01.bmp"
+img_path1 = main_data_dir + "\\016_01.bmp"
+img_path2 = main_data_dir + "\\016_01.bmp"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
 lbp = LBP()
-lbp.extract(img = img1, path="ExampleImage\\LBP_" + img_path1.split("\\")[-1])                  
-lbp.extract(img = img2, path="ExampleImage\\LBP_" + img_path2.split("\\")[-1])
+lbp.extract(img = img1, path="ExampleImage\\LBP_vein_" + img_path1.split("\\")[-1])                  
+lbp.extract(img = img2, path="ExampleImage\\LBP_vein" + img_path2.split("\\")[-1])

@@ -40,7 +40,11 @@ class MaskVein:
         roi = self.get_roi(img_gray)
         # cv2.imshow("ROI", roi)
         # cv2.waitKey(0)
+<<<<<<< Updated upstream
         print(np.unique(roi))
+=======
+        print(np.unique)
+>>>>>>> Stashed changes
 
 
 os.chdir("..")

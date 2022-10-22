@@ -94,6 +94,8 @@ class BVLC:
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         elif gray == "avg":
             img_gray = (img[:, :, 0] + img[:, :, 1] + img[:, :, 2])/3
+        else:
+            img_gray = img[:, :, gray]
 
         padding_size = self.padding(img_gray)
 
@@ -133,6 +135,6 @@ img_path2 = main_data_dir + "\\CHGastro_Normal_047.png"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
-bdlc = BVLC(patchsize=7)
-extract1 = bdlc.extract(img = img1, path="ExampleImage\\BVLC_7" + img_path1.split("\\")[-1])                  
-extract2 = bdlc.extract(img = img2, path="ExampleImage\\BVLC_7" + img_path2.split("\\")[-1])
+bdlc = BVLC(patchsize=2)
+extract1 = bdlc.extract(img = img1, gray = 2, path="ExampleImage\\BVLC_2_red" + img_path1.split("\\")[-1])                  
+extract2 = bdlc.extract(img = img2, gray = 2, path="ExampleImage\\BVLC_2_red" + img_path2.split("\\")[-1])

@@ -51,7 +51,7 @@ class BDIP:
         return full_padd_gray
 
 
-    def extract(self, img : np.array, gray = "grayscale", path = None):
+    def extract(self, img : np.array, gray = "grayscale", extended = False, path = None):
         """extract calculating the BDIP of a given image
 
         Arguments:
@@ -69,6 +69,8 @@ class BDIP:
         else:
             img_gray = img[:, :, gray]
 
+        
+
         padding_size = self.padding(img_gray)
         padd_gray = self.add_padding(img_gray, padding_size)
 
@@ -81,13 +83,22 @@ class BDIP:
             for j in range(0, col_index, self.block_size):
                 current_index = (int(i/self.block_size), int(j/self.block_size))
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
-                output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/(np.amax(current_block) + self.epsilon)
-
+                if np.all(current_block==0) == False:
+                    # print(np.all(current_block==0))
+                    # print(current_block)
+                    output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/(np.amax(current_block) + self.epsilon)
+                    # break
+            # break
         # cv2.imshow("results", output)
         # cv2.waitKey(0)
         if path:
             frame_normed = 255 * (output - output.min()) / (output.max() - output.min())
             frame_normed = np.array(frame_normed, np.int)
+            if extended:
+                w, h = frame_normed.shape
+                extended_channel = np.zeros((w, h, 3))
+                extended_channel[:, :, gray] = frame_normed
+                frame_normed = extended_channel
             cv2.imwrite(path, frame_normed)
             plt.hist(output.ravel(), bins=256, range=(0.0, 1.0), fc='k', ec='k') #calculating histogram
             plt.savefig("Histogram\\" + path.split("\\")[-1])
@@ -100,7 +111,11 @@ img_path1 = main_data_dir + "\\CHGastro_Abnormal_037.png"
 img_path2 = main_data_dir + "\\CHGastro_Normal_047.png"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
+print(img1[:10, :10, 0])
+print(img1[:10, :10, 1])
+print(img1[:10, :10, 2])
 
-bdip = BDIP(patch_size=7)
-bdip.extract(img = img1, path="ExampleImage\\BDIP_7" + img_path1.split("\\")[-1])                  
-bdip.extract(img = img2, path="ExampleImage\\BDIP_7" + img_path2.split("\\")[-1])
+bdip = BDIP(patch_size=2)
+bdip.extract(img = img1, gray = 2, path="ExampleImage\\BDIP_2_red" + img_path1.split("\\")[-1])                  
+bdip.extract(img = img2, gray = 2, path="ExampleImage\\BDIP_2_red" + img_path2.split("\\")[-1])
+

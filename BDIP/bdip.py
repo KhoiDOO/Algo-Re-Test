@@ -84,11 +84,7 @@ class BDIP:
                 current_index = (int(i/self.block_size), int(j/self.block_size))
                 current_block = padd_gray[i:i+self.block_size, j:j+self.block_size]
                 if np.all(current_block==0) == False:
-                    # print(np.all(current_block==0))
-                    # print(current_block)
                     output[current_index[0], current_index[1]] = self.patch_area - np.sum(current_block)/(np.amax(current_block) + self.epsilon)
-                    # break
-            # break
         # cv2.imshow("results", output)
         # cv2.waitKey(0)
         if path:

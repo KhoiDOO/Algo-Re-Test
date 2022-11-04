@@ -51,7 +51,7 @@ class BDIP:
         return full_padd_gray
 
 
-    def extract(self, img : np.array, gray = "grayscale", extended = False, path = None):
+    def extract(self, img : np.array, gray = "grayscale", extended = True, path = None):
         """extract calculating the BDIP of a given image
 
         Arguments:
@@ -107,11 +107,8 @@ img_path1 = main_data_dir + "\\CHGastro_Abnormal_037.png"
 img_path2 = main_data_dir + "\\CHGastro_Normal_047.png"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
-print(img1[:10, :10, 0])
-print(img1[:10, :10, 1])
-print(img1[:10, :10, 2])
 
-bdip = BDIP(patch_size=2)
-bdip.extract(img = img1, gray = 2, path="ExampleImage\\BDIP_2_red" + img_path1.split("\\")[-1])                  
-bdip.extract(img = img2, gray = 2, path="ExampleImage\\BDIP_2_red" + img_path2.split("\\")[-1])
+bdip = BDIP(patch_size=7)
+bdip.extract(img = img1, gray = 2, path="ExampleImage\\BDIP_7_red" + img_path1.split("\\")[-1])                  
+bdip.extract(img = img2, gray = 2, path="ExampleImage\\BDIP_7_red" + img_path2.split("\\")[-1])
 

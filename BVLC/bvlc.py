@@ -80,7 +80,7 @@ class BVLC:
 
         return nominator/dominator
 
-    def extract(self, img : np.array, gray = "grayscale", path = None):
+    def extract(self, img : np.array, gray = "grayscale", path = None, extended = True):
         """extract Calculates the BVLC image
 
         Arguments:
@@ -123,6 +123,10 @@ class BVLC:
         if path:
             frame_normed = 255 * (output - output.min()) / (output.max() - output.min())
             frame_normed = np.array(frame_normed, np.int)
+            if extended:
+                base_img = np.zeros((frame_normed.shape[0], frame_normed.shape[1], 3))
+                base_img[:, :, gray] = frame_normed
+                frame_normed = base_img
             cv2.imwrite(path, frame_normed)
             plt.hist(output.ravel(), bins=256, range=(0.0, 2.0), fc='k', ec='k') #calculating histogram
             plt.savefig("Histogram\\" + path.split("\\")[-1])
@@ -135,6 +139,6 @@ img_path2 = main_data_dir + "\\CHGastro_Normal_047.png"
 img1 = cv2.imread(img_path1)
 img2 = cv2.imread(img_path2)
 
-bdlc = BVLC(patchsize=2)
-extract1 = bdlc.extract(img = img1, gray = 2, path="ExampleImage\\BVLC_2_red" + img_path1.split("\\")[-1])                  
-extract2 = bdlc.extract(img = img2, gray = 2, path="ExampleImage\\BVLC_2_red" + img_path2.split("\\")[-1])
+bdlc = BVLC(patchsize=7)
+extract1 = bdlc.extract(img = img1, gray = 2, path="ExampleImage\\BVLC_7_red" + img_path1.split("\\")[-1])                  
+extract2 = bdlc.extract(img = img2, gray = 2, path="ExampleImage\\BVLC_7_red" + img_path2.split("\\")[-1])
